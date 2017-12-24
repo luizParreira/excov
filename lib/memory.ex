@@ -1,5 +1,5 @@
 defprotocol Memory do
   @doc "Implements a memory `get` and `set`"
   def get(self, state, action)
-  def set(self, state, action, value)
+  def set(self, state, action, value, valid_actions)
 end
