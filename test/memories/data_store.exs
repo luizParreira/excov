@@ -8,23 +8,24 @@ defmodule Memories.DataStoreTest do
   setup context do
     {:ok, _pid} = start_supervised({Memories.DataStore, name: context.test})
     state1 = {true, :hold, "low"}
+    seed = 0.0
 
     DataStore.create_or_update(context.test, {state1, :buy, 1.234}, @valid_actions)
-    %{name: context.test, state: state1}
+    %{name: context.test, state: state1, seed: seed}
   end
 
-  test "persists actions", %{name: name, state: state} do
+  test "persists actions", %{name: name, state: state, seed: seed} do
     valid_actions =  ~w[buy sell]a
 
     actions = %{buy: 1.234, sell: 0.0}
     assert {:ok, actions} == DataStore.lookup(name, state)
 
     actions = %{buy: 1.234, sell: 3.234}
-    DataStore.create_or_update(name, {state, :sell, 3.234}, valid_actions)
+    DataStore.create_or_update(name, {state, :sell, 3.234}, {valid_actions, seed})
     assert {:ok, actions} == DataStore.lookup(name, state)
 
     actions = %{buy: 0.7, sell: 3.234}
-    DataStore.create_or_update(name, {state, :buy, 0.7}, valid_actions)
+    DataStore.create_or_update(name, {state, :buy, 0.7}, {valid_actions, seed})
     assert {:ok, actions} == DataStore.lookup(name, state)
   end
 end

@@ -17,8 +17,8 @@ defmodule Memories.DataStore do
   @doc """
   Ensures there is a bucket associated with the given `name` in `server`.
   """
-  def create_or_update(server, {state, action, value}, valid_actions) do
-    GenServer.call(server, {:create_or_update, state, action, value, valid_actions})
+  def create_or_update(server, {state, action, value}, {valid_actions, seed}) do
+    GenServer.call(server, {:create_or_update, state, action, value, valid_actions, seed})
   end
 
   def lookup(server, state) do
@@ -38,14 +38,14 @@ defmodule Memories.DataStore do
 
   # 4. The previous handle_call callback for lookup was removed
 
-  def handle_call({:create_or_update, state, action, value, valid_actions}, _from, table_name) do
+  def handle_call({:create_or_update, state, action, value, valid_actions, seed}, _from, table_name) do
     case lookup(table_name, state) do
       {:ok, actions} ->
         actions = %{actions | action => value}
         :ets.insert(table_name, {state, actions})
         {:reply, :ok, table_name}
       :error ->
-        actions = valid_actions |> Enum.map(&({&1, 0.0})) |> Map.new |> Map.put(action, value)
+        actions = valid_actions |> Enum.map(&({&1, seed})) |> Map.new |> Map.put(action, value)
         :ets.insert(table_name, {state, actions})
         {:reply, :ok, table_name}
     end
