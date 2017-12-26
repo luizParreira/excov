@@ -1,7 +1,7 @@
 defmodule Tasks do
   use GenServer
 
-  def start_link(opts \\ name: :training) do
+  def start_link(opts \\ [name: :training]) do
     server = Keyword.fetch!(opts, :name)
     GenServer.start_link(__MODULE__, server, opts)
   end
@@ -15,7 +15,7 @@ defmodule Tasks do
   end
 
   def handle_call({:train, game, policy, memory, brain, step}, _from, state) do
-    cond step do
+    case step do
       {state, action0, next_state, reward} ->
         action_values = Game.actions(game)
                         |> Enum.map(fn (action) ->
