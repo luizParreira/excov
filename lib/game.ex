@@ -4,4 +4,5 @@ defprotocol Game do
   def reward(self)
   def act(self, action)
   def state(self)
+  def final?(self)
 end
