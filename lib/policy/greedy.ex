@@ -4,9 +4,9 @@ end
 
 defimpl Policy, for: Policy.Greedy do
   def choose(_greedy, []), do: nil
-  def choose(_random, action_values) do
+  def choose(_greedy, action_values) do
     action_values
-    |> Enum.max_by(fn {_action, value} -> value end)
+    |> Enum.max_by(& elem(&1, 1))
     |> elem(0)
   end
 end
