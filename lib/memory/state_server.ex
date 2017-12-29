@@ -4,9 +4,8 @@ defmodule Memory.StateServer do
   ## Client API
 
   @doc """
-  Starts the registry with the given options.
-
-  `:name` is always required.
+  Starts the state server.
+  => {:ok, pid}
   """
   def start_link() do
     # 1. Pass the name to GenServer's init
@@ -14,7 +13,10 @@ defmodule Memory.StateServer do
   end
 
   @doc """
-  Ensures there is a bucket associated with the given `name` in `server`.
+  Creates or updates the state represented by given action and value
+  also receives valid actions and seed
+
+  # TODO: Remove `valid_actions` from here
   """
   def create_or_update(pid, {state, action, value}, {valid_actions, seed}) do
     GenServer.cast(pid, {:create_or_update, state, action, value, valid_actions, seed})
@@ -31,8 +33,6 @@ defmodule Memory.StateServer do
   def lookup(server, state) do
     GenServer.call(server, {:lookup, state})
   end
-
-  # 4. The previous handle_call callback for lookup was removed
 
   def handle_cast({:create_or_update, state, action, value, valid_actions, seed}, all_state) do
     case Map.get(all_state, state) do
