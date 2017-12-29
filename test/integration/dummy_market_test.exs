@@ -42,9 +42,9 @@ defmodule Tasks.DummyMarketTest do
     base_pair: 1.0
   }
 
-  setup context do
-    {:ok, pid} = Memories.DataStore.start_link()
-    memory = %Memories.Table{pid: pid, seed: 0.0}
+  setup _context do
+    {:ok, pid} = Memory.StateServer.start_link()
+    memory = %Memory.Table{pid: pid, seed: 0.0}
     %{memory: memory}
   end
 
@@ -54,14 +54,12 @@ defmodule Tasks.DummyMarketTest do
     train_policy = %Policy.Greedy{}
 
     brain = %Brain{alpha: 1.0, gamma: 0.0}
-    plays = Play.train(
+    Play.train(
       10,
       {@game, play_policy, train_policy, memory, brain}
     )
-    IO.inspect Memories.DataStore.view(memory.pid)
 
     {:ok, game} = test_market(@game, memory, train_policy)
-    IO.puts "PROFIT #{Excov.DummyMarket.base_pair_total(game) - 1.0}"
     assert Excov.DummyMarket.base_pair_total(game) === 3.6733564719429013
   end
 
@@ -70,10 +68,9 @@ defmodule Tasks.DummyMarketTest do
       true -> {:ok, game}
       false ->
         state = Game.state(game)
-        action_values = Utils.build_action_values(game, memory, state, verbose: true)
+        action_values = Utils.build_action_values(game, memory, state)
         action = Policy.choose(policy, action_values)
         game = Game.act(game, action)
-        IO.puts "#{action} #{Excov.DummyMarket.base_pair_total(game)} #{game.price}"
         test_market(game, memory, policy)
     end
   end

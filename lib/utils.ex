@@ -1,13 +1,9 @@
 defmodule Utils do
-  def build_action_values(game, memory, state, opts \\ [verbose: false]) do
+  def build_action_values(game, memory, state) do
     game
     |> Game.actions
     |> Enum.map(fn (action) ->
-      value = Memory.get(memory, state, action)
-      if Keyword.fetch!(opts, :verbose) do
-        IO.puts "VALUE: #{value}"
-      end
-      {action, value}
+      {action, Memory.get(memory, state, action)}
     end)
   end
 end
