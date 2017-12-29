@@ -1,6 +1,5 @@
 defmodule Memory.StateServerTest do
   use ExUnit.Case, async: false
-  doctest Excov
   alias Memory.StateServer
 
   setup _context do
