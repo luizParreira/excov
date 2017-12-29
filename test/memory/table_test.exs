@@ -1,24 +1,24 @@
-defmodule Memories.TableTest do
+defmodule Memory.TableTest do
   use ExUnit.Case, async: false
   @valid_actions ~w[buy sell]a
 
-  alias Memories.{Table, DataStore}
-  setup context do
-    table = %Table{name: context.test, seed: 1.3}
-    {:ok, _pid} = Table.init(table)
+  alias Memory.{Table, StateServer}
+  setup _context do
+    {:ok, pid} = StateServer.start_link()
+    table = %Table{pid: pid, seed: 1.3}
     state = {true, :hold, "low"}
 
-    DataStore.create_or_update(table.name, {state, :buy, 1.234}, {@valid_actions, table.seed})
+    StateServer.create_or_update(pid, {state, :buy, 1.234}, {@valid_actions, table.seed})
     %{table: table, state: state}
   end
 
   test "get", %{table: table, state: state} do
     assert Memory.get(table, state, :buy) === 1.234
 
-    DataStore.create_or_update(table.name, {state, :sell, 3.234}, {@valid_actions, table.seed})
+    StateServer.create_or_update(table.pid, {state, :sell, 3.234}, {@valid_actions, table.seed})
     assert Memory.get(table, state, :sell) === 3.234
 
-    DataStore.create_or_update(table.name, {state, :buy, 0.7}, {@valid_actions, table.seed})
+    StateServer.create_or_update(table.pid, {state, :buy, 0.7}, {@valid_actions, table.seed})
     assert Memory.get(table, state, :buy) === 0.7
   end
 
