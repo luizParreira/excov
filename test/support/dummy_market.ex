@@ -1,5 +1,25 @@
 defmodule Excov.DummyMarket do
-  defstruct [:step, :prices, :base_pair, :trading_pair, :price, :last_value, :initial_value]
+  defstruct [
+    step: 0,
+    prices: [1.0, 2.3],
+    base_pair: 1.0,
+    trading_pair: 0.0,
+    price: 1.0,
+    last_value: 1,
+    initial_value: 1.0
+  ]
+
+  def new(prices) do
+    %Excov.DummyMarket{
+      step: 0,
+      prices: prices,
+      base_pair: 1.0,
+      trading_pair: 0.0,
+      price: Enum.at(prices, 0),
+      last_value: 1.0,
+      initial_value: 1.0
+    }
+  end
 
   def base_pair_total(self) do
     self.base_pair + self.trading_pair * self.price
