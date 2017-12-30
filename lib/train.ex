@@ -1,8 +1,7 @@
 defmodule Train do
   def train(n, {game, play_policy, train_policy , memory, brain}) do
     case Game.final?(game) do
-      true ->
-        game
+      true -> :ok
       false ->
         # Play
         state = Game.state(game)
