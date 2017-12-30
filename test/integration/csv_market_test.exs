@@ -1,5 +1,9 @@
-defmodule Tasks.DummyMarketTest do
+defmodule Excov.CSVMarketTest do
   use ExUnit.Case, async: false
+
+  alias Excov.CSVMarket
+  alias Memory.{StateServer, Table}
+  alias Policy.{Egreedy, Greedy}
 
   @prices File.stream!("data/Litecoin.csv")
   |> CSV.decode!
@@ -10,35 +14,28 @@ defmodule Tasks.DummyMarketTest do
   end)
   |> Enum.to_list
 
-  @game %Excov.DummyMarket{
-    step: 0,
-    initial_value: 1.0,
-    trading_pair: 1.0,
-    last_value: 1.0,
-    prices: @prices,
-    price: Enum.at(@prices, 0),
-    base_pair: 1.0
-  }
+  @train_game CSVMarket.new(Enum.take(@prices, round(Enum.count(@prices) * 0.8)), 3, 7)
+  @test_game CSVMarket.new(Enum.drop(@prices, round(Enum.count(@prices) * 0.8)), 3, 7)
 
   setup _context do
-    {:ok, pid} = Memory.StateServer.start_link()
-    memory = %Memory.Table{pid: pid, seed: 0.0}
+    {:ok, pid} = StateServer.start_link()
+    memory = %Table{pid: pid, seed: 0.0}
     %{memory: memory}
   end
 
   test "starts the game and trains the agent", %{memory: memory} do
 
-    play_policy = %Policy.Egreedy{epsilon: 0.6}
-    train_policy = %Policy.Greedy{}
+    play_policy = %Egreedy{epsilon: 0.1}
+    train_policy = %Greedy{}
 
-    brain = %Brain{alpha: 1.0, gamma: 0.0}
+    brain = %Brain{alpha: 0.1, gamma: 0.9}
     Play.train(
-      10,
-      {@game, play_policy, train_policy, memory, brain}
+      0,
+      {@train_game, play_policy, train_policy, memory, brain}
     )
 
-    {:ok, game} = test_market(@game, memory, train_policy)
-    assert Excov.DummyMarket.base_pair_total(game) === 3.6733564719429013
+    {:ok, game} = test_market(@test_game, memory, train_policy)
+    assert CSVMarket.base_pair_total(game) === 4.455543836519446
   end
 
   def test_market(game, memory, policy) do
