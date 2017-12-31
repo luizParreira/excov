@@ -2,7 +2,7 @@ defmodule Excov.CSVMarketTest do
   use ExUnit.Case, async: false
 
   alias Excov.CSVMarket
-  alias Memory.{StateServer, Table}
+  alias Memory.{Server, Table}
   alias Policy.{Egreedy, Greedy}
 
   @prices File.stream!("data/Litecoin.csv")
@@ -18,7 +18,7 @@ defmodule Excov.CSVMarketTest do
   @test_game CSVMarket.new(Enum.drop(@prices, round(Enum.count(@prices) * 0.8)), 3, 7)
 
   setup _context do
-    {:ok, pid} = StateServer.start_link()
+    {:ok, pid} = Server.start_link()
     memory = %Table{pid: pid, seed: 0.0}
     %{memory: memory}
   end
@@ -29,25 +29,10 @@ defmodule Excov.CSVMarketTest do
     train_policy = %Greedy{}
 
     brain = %Brain{alpha: 0.1, gamma: 0.9}
-    Play.train(
-      0,
-      {@train_game, play_policy, train_policy, memory, brain}
-    )
+    Excov.train(0,{@train_game, play_policy, train_policy, memory, brain})
 
-    {:ok, game} = test_market(@test_game, memory, train_policy)
+    [ok: game] = Excov.test(1, {@test_game, train_policy, memory})
     assert CSVMarket.base_pair_total(game) === 4.455543836519446
-  end
-
-  def test_market(game, memory, policy) do
-    case Game.final?(game) do
-      true -> {:ok, game}
-      false ->
-        state = Game.state(game)
-        action_values = Utils.build_action_values(game, memory, state)
-        action = Policy.choose(policy, action_values)
-        game = Game.act(game, action)
-        test_market(game, memory, policy)
-    end
   end
 end
 
