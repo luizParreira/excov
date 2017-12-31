@@ -5,4 +5,10 @@ defmodule Play do
     |> Task.async_stream(Train, :train, [state])
     |> Enum.to_list
   end
+
+  def test(n, state) do
+    0..n
+    |> Task.async_stream(Test, :test, [state])
+    |> Enum.to_list
+  end
 end
