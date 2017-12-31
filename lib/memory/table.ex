@@ -3,15 +3,15 @@ defmodule Memory.Table do
 end
 
 defimpl Memory, for: Memory.Table do
-  alias Memory.StateServer
+  alias Memory.Server
   def get(table, state, action) do
-    case StateServer.lookup(table.pid, state) do
+    case Server.lookup(table.pid, state) do
       nil -> table.seed
       actions -> Map.get(actions, action) || table.seed
     end
   end
 
   def set(table, state, action, value, valid_actions) do
-    StateServer.create_or_update(table.pid, {state, action, value}, {valid_actions, table.seed})
+    Server.create_or_update(table.pid, {state, action, value}, {valid_actions, table.seed})
   end
 end

@@ -1,4 +1,4 @@
-defmodule Memory.StateServer do
+defmodule Memory.Server do
   use GenServer
 
   ## Client API
