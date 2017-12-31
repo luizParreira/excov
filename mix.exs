@@ -11,8 +11,8 @@ defmodule Excov.Mixfile do
       elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env),
       build_embedded: Mix.env == :prod,
-      source_url: "https://github.com/luizParreira/excov"
-      docs: [extras: ["README.md"], main: "Excov"]
+      source_url: "https://github.com/luizParreira/excov",
+      docs: [extras: ["README.md"], main: "Excov"],
       deps: deps(),
       package: package()
     ]
