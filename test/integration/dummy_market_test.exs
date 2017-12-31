@@ -1,5 +1,3 @@
-require IEx
-
 defmodule Tasks.DummyMarketTest do
   use ExUnit.Case, async: false
 
@@ -53,9 +51,9 @@ defmodule Tasks.DummyMarketTest do
     play_policy = %Policy.Egreedy{epsilon: 0.6}
     train_policy = %Policy.Greedy{}
 
-    brain = %Brain{alpha: 1.0, gamma: 0.0}
+    brain = %Brain{alpha: 0.3, gamma: 0.9}
     Play.train(
-      10,
+      200,
       {@game, play_policy, train_policy, memory, brain}
     )
 
