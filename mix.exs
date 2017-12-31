@@ -7,6 +7,7 @@ defmodule Excov.Mixfile do
   def project do
     [
       app: :excov,
+      description: @description,
       version: @version,
       elixir: ">= 1.3.0",
       elixirc_paths: elixirc_paths(Mix.env),
