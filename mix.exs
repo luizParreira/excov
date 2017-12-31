@@ -9,7 +9,7 @@ defmodule Excov.Mixfile do
       app: :excov,
       description: @description,
       version: @version,
-      elixir: ">= 1.3.0",
+      elixir: "~> 1.5",
       elixirc_paths: elixirc_paths(Mix.env),
       build_embedded: Mix.env == :prod,
       source_url: "https://github.com/luizParreira/excov",
