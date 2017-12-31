@@ -1,5 +1,7 @@
 # Excov
 
+[![Build Status](https://travis-ci.org/luizParreira/excov.svg?branch=master)](https://travis-ci.org/luizParreira/excov)
+
 **TODO: Add description**
 
 ## Installation
