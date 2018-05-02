@@ -37,8 +37,9 @@ defmodule Memory.Server do
   def handle_cast({:create_or_update, state, action, value, valid_actions, seed}, all_state) do
     case Map.get(all_state, state) do
       nil ->
-        actions = valid_actions |> Enum.map(&({&1, seed})) |> Map.new |> Map.put(action, value)
+        actions = valid_actions |> Enum.map(&{&1, seed}) |> Map.new() |> Map.put(action, value)
         {:noreply, Map.put(all_state, state, actions)}
+
       actions ->
         {:noreply, %{all_state | state => %{actions | action => value}}}
     end
@@ -53,8 +54,6 @@ defmodule Memory.Server do
   end
 
   def terminate(_reason, state) do
-    IO.puts "Stoping server ..."
-    IO.inspect state
     :ok
   end
 end

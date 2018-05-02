@@ -1,13 +1,11 @@
 defmodule Excov.DummyMarket do
-  defstruct [
-    step: 0,
-    prices: [1.0, 2.3],
-    base_pair: 1.0,
-    trading_pair: 0.0,
-    price: 1.0,
-    last_value: 1,
-    initial_value: 1.0
-  ]
+  defstruct step: 0,
+            prices: [1.0, 2.3],
+            base_pair: 1.0,
+            trading_pair: 0.0,
+            price: 1.0,
+            last_value: 1,
+            initial_value: 1.0
 
   def new(prices) do
     %Excov.DummyMarket{
@@ -34,7 +32,7 @@ defimpl Game, for: Excov.DummyMarket do
   end
 
   def reward(game) do
-    case {DummyMarket.base_pair_total(game), game.last_value}  do
+    case {DummyMarket.base_pair_total(game), game.last_value} do
       {total, value} when total === value -> 0.0
       {total, value} when total > value -> 0.1
       {total, value} when total < value -> -0.1
@@ -43,12 +41,15 @@ defimpl Game, for: Excov.DummyMarket do
 
   def act(game, action) do
     last = DummyMarket.base_pair_total(game)
+
     {trading_pair, base_pair} =
       case action do
         :sell -> {0.0, game.base_pair + game.trading_pair * game.price}
         :buy -> {game.trading_pair + game.base_pair / game.price, 0.0}
       end
+
     step = game.step + 1
+
     %DummyMarket{
       trading_pair: trading_pair,
       base_pair: base_pair,
@@ -68,5 +69,3 @@ defimpl Game, for: Excov.DummyMarket do
     self.step + 1 === Enum.count(self.prices)
   end
 end
-
-

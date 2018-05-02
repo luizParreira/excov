@@ -3,6 +3,7 @@ defmodule Memory.TableTest do
   @valid_actions ~w[buy sell]a
 
   alias Memory.{Table, Server}
+
   setup _context do
     {:ok, pid} = Server.start_link()
     table = %Table{pid: pid, seed: 1.3}
@@ -44,5 +45,3 @@ defmodule Memory.TableTest do
     assert Memory.get(table, {false, :unknown, "unknwon"}, :sell) === table.seed
   end
 end
-
-

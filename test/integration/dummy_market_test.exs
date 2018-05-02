@@ -47,16 +47,13 @@ defmodule Tasks.DummyMarketTest do
   end
 
   test "starts the game and trains the agent", %{memory: memory} do
-
     play_policy = %Policy.Egreedy{epsilon: 0.6}
     train_policy = %Policy.Greedy{}
 
     brain = %Brain{alpha: 0.3, gamma: 0.9}
-    Excov.train(200,{@game, play_policy, train_policy, memory, brain})
+    Excov.train(200, {@game, play_policy, train_policy, memory, brain})
 
     [ok: game] = Excov.test(1, {@game, train_policy, memory})
     assert Excov.DummyMarket.base_pair_total(game) === 3.6733564719429013
   end
 end
-
-
