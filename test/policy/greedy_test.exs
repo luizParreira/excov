@@ -12,5 +12,3 @@ defmodule Policy.GreedyTest do
     assert Policy.choose(%Greedy{}, []) === nil
   end
 end
-
-

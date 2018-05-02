@@ -1,5 +1,15 @@
 defmodule Excov.CSVMarket do
-  defstruct [:step, :prices, :base_pair, :trading_pair, :price, :last_value, :initial_value, :rolling_means, :price_sma_ratio]
+  defstruct [
+    :step,
+    :prices,
+    :base_pair,
+    :trading_pair,
+    :price,
+    :last_value,
+    :initial_value,
+    :rolling_means,
+    :price_sma_ratio
+  ]
 
   alias Excov.CSVMarket
 
@@ -27,24 +37,28 @@ defmodule Excov.CSVMarket do
   end
 
   def compute_rolling_means(prices, _, n) when length(prices) == n, do: []
+
   def compute_rolling_means(prices, window, n \\ 0) do
     [do_sma(prices, n, window) | compute_rolling_means(prices, window, n + 1)]
   end
 
   def do_sma(prices, _step, window) when length(prices) < window, do: nil
   def do_sma(_prices, step, window) when step + 1 < window, do: nil
+
   def do_sma(prices, step, window) do
-    window_sum = prices
-    |> Enum.slice((step - window + 1)..step)
-    |> Enum.sum
+    window_sum =
+      prices
+      |> Enum.slice((step - window + 1)..step)
+      |> Enum.sum()
 
     window_sum / window
   end
 
   def discretize(values, n) do
-    bins = values
-           |> Enum.sort
-           |> Enum.chunk_every(round(Float.ceil(length(values) / n)))
+    bins =
+      values
+      |> Enum.sort()
+      |> Enum.chunk_every(round(Float.ceil(length(values) / n)))
 
     values
     |> Enum.map(fn v ->
@@ -62,7 +76,9 @@ defmodule Excov.CSVMarket do
     rolling_means
     |> Enum.zip(prices)
     |> Enum.map(fn
-      {nil, _} -> nil
+      {nil, _} ->
+        nil
+
       {rolling_mean, price} ->
         price / rolling_mean
     end)
@@ -78,7 +94,7 @@ defimpl Game, for: Excov.CSVMarket do
   end
 
   def reward(game) do
-    case {CSVMarket.base_pair_total(game), game.last_value}  do
+    case {CSVMarket.base_pair_total(game), game.last_value} do
       {total, value} when total === value -> 0.0
       {total, value} when total > value -> 0.1
       {total, value} when total < value -> -0.1
@@ -87,18 +103,23 @@ defimpl Game, for: Excov.CSVMarket do
 
   def act(game, action) do
     last = CSVMarket.base_pair_total(game)
+
     {trading_pair, base_pair} =
       case action do
         :sell -> {0.0, game.base_pair + game.trading_pair * game.price}
         :buy -> {game.trading_pair + game.base_pair / game.price, 0.0}
       end
+
     step = game.step + 1
-    %{game |
-      trading_pair: trading_pair,
-      base_pair: base_pair,
-      step: step,
-      last_value: last,
-      price: Enum.at(game.prices, step)}
+
+    %{
+      game
+      | trading_pair: trading_pair,
+        base_pair: base_pair,
+        step: step,
+        last_value: last,
+        price: Enum.at(game.prices, step)
+    }
   end
 
   def state(game) do
@@ -109,5 +130,3 @@ defimpl Game, for: Excov.CSVMarket do
     self.step + 1 === Enum.count(self.prices)
   end
 end
-
-

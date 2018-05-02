@@ -1,7 +1,9 @@
 defmodule Test do
   def test(n, {game, policy, memory}) do
     case Game.final?(game) do
-      true -> game
+      true ->
+        game
+
       false ->
         state = Game.state(game)
         action_values = Utils.build_action_values(game, memory, state)

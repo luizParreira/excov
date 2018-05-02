@@ -5,7 +5,7 @@ defmodule Memory.ServerTest do
   setup _context do
     {:ok, pid} = Server.start_link()
     state1 = {true, :hold, "low"}
-    valid_actions =  ~w[buy sell]a
+    valid_actions = ~w[buy sell]a
     seed = 0.0
 
     Server.create_or_update(pid, {state1, :buy, 1.234}, {valid_actions, seed})
@@ -25,5 +25,3 @@ defmodule Memory.ServerTest do
     assert Server.lookup(pid, state) === actions
   end
 end
-
-

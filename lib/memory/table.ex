@@ -4,6 +4,7 @@ end
 
 defimpl Memory, for: Memory.Table do
   alias Memory.Server
+
   def get(table, state, action) do
     case Server.lookup(table.pid, state) do
       nil -> table.seed

@@ -20,9 +20,18 @@ defmodule ExcovTest do
     {:ok, pid} = Memory.Server.start_link()
     memory = %Memory.Table{pid: pid, seed: 0.0}
     Excov.train(2, {game, play_policy, train_policy, memory, brain})
+
     assert Excov.test(1, {game, train_policy, memory}) ==
-      [ok: %Excov.DummyMarket{base_pair: 0.0, initial_value: 1.0,
-             last_value: 1.0, price: 2.3, prices: [1.0, 2.3], step: 1,
-             trading_pair: 1.0}]
+             [
+               ok: %Excov.DummyMarket{
+                 base_pair: 0.0,
+                 initial_value: 1.0,
+                 last_value: 1.0,
+                 price: 2.3,
+                 prices: [1.0, 2.3],
+                 step: 1,
+                 trading_pair: 1.0
+               }
+             ]
   end
 end

@@ -10,8 +10,8 @@ defmodule Excov.Mixfile do
       description: @description,
       version: @version,
       elixir: "~> 1.5",
-      elixirc_paths: elixirc_paths(Mix.env),
-      build_embedded: Mix.env == :prod,
+      elixirc_paths: elixirc_paths(Mix.env()),
+      build_embedded: Mix.env() == :prod,
       source_url: "https://github.com/luizParreira/excov",
       docs: [extras: ["README.md"], main: "Excov"],
       deps: deps(),
@@ -21,7 +21,7 @@ defmodule Excov.Mixfile do
 
   # Specifies which paths to compile per environment.
   defp elixirc_paths(:test), do: ["lib", "test/support"]
-  defp elixirc_paths(_),     do: ["lib"]
+  defp elixirc_paths(_), do: ["lib"]
 
   def package do
     [
